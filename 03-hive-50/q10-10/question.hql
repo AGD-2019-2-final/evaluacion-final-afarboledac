@@ -24,3 +24,24 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+DROP TABLE IF EXISTS detail;
+CREATE TABLE detail
+AS
+    SELECT
+        key AS clave,
+        value AS valor
+    FROM (
+        SELECT
+            c3
+        FROM
+            t0
+    ) aux
+    LATERAL VIEW
+        explode(c3) aux;
+
+
+INSERT OVERWRITE DIRECTORY 'output/'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT clave, COUNT(valor) 
+FROM detail
+GROUP BY clave;

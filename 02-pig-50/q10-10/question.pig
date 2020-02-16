@@ -15,6 +15,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -26,3 +28,12 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+surname_lenght = FOREACH u GENERATE surname, SIZE(surname) as longitud;
+surname_lengt_ordered = ORDER surname_lenght by longitud DESC, surname ASC;
+first_five = LIMIT surname_lengt_ordered 5;
+
+
+
+STORE first_five INTO 'output' USING PigStorage(',');
+fs -get output ;

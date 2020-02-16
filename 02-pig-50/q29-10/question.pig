@@ -29,6 +29,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 -- 
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -40,3 +42,27 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+columna_fecha = FOREACH u GENERATE birthday, ToDate(birthday, 'yyyy-MM-dd') as formated_birthday;
+columna_fecha_formateada = FOREACH columna_fecha GENERATE birthday,
+                                    (CASE GetMonth(formated_birthday)
+                                        WHEN 1 THEN 'ene'
+                                        WHEN 2 THEN 'feb'
+                                        WHEN 3 THEN 'mar'
+                                        WHEN 4 THEN 'abr' 
+                                        WHEN 5 THEN 'may' 
+                                        WHEN 6 THEN 'jun'
+                                        WHEN 7 THEN 'jul' 
+                                        WHEN 8 THEN 'ago'
+                                        WHEN 9 THEN 'sep'
+                                        WHEN 10 THEN 'oct'
+                                        WHEN 11 THEN 'nov'
+                                        WHEN 12 THEN 'dic'
+                                    END), 
+                                    (CASE SIZE((CHARARRAY)GetMonth(formated_birthday))
+                                        WHEN 1 THEN CONCAT('0', (CHARARRAY)GetMonth(formated_birthday))
+                                        WHEN 2 THEN (CHARARRAY)GetMonth(formated_birthday)
+                                    END), 
+                                    GetMonth(formated_birthday);
+
+STORE columna_fecha_formateada INTO 'output' USING PigStorage(',');
+fs -get output ;

@@ -17,6 +17,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 -- 
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -29,3 +31,7 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+columna_color_nombre = FOREACH u GENERATE firstname, color;
+filtro = FILTER columna_color_nombre by (color matches 'green') OR (color matches 'blue');
+STORE filtro INTO 'output' USING PigStorage('\t');
+fs -get output ;

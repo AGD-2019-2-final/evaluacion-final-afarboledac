@@ -22,6 +22,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -33,3 +35,9 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+apellido = FOREACH u GENERATE surname; 
+fitro_apellido = FILTER apellido by (surname matches '^[D-K].*');
+
+
+STORE fitro_apellido INTO 'output' USING PigStorage(',');
+fs -get output ;

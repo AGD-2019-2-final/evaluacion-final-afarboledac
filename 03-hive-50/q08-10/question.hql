@@ -40,5 +40,28 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS detail;
+CREATE TABLE detail
+AS
+    SELECT
+        c2,
+        key AS clave,
+        value AS valor
+    FROM (
+        SELECT
+            c2,
+            c6
+        FROM
+            tbl0
+    ) t0
+    LATERAL VIEW
+        explode(c6) t0;
+
+
+INSERT OVERWRITE DIRECTORY 'output/'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT c2, SUM(valor) 
+FROM detail
+GROUP BY c2;
 
 

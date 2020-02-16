@@ -39,3 +39,38 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+
+
+DROP TABLE IF EXISTS detail;
+CREATE TABLE detail
+AS
+    SELECT
+        c1,
+        key AS clave,
+        value AS valor
+    FROM (
+        SELECT
+            c1,c4
+        FROM
+            tbl1
+    ) aux
+    LATERAL VIEW
+        explode(c4) aux;
+
+
+INSERT OVERWRITE DIRECTORY 'output/'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT
+    t.c1, t.c2, d.valor
+FROM
+    tbl0 t
+JOIN(
+    SELECT 
+        d.c1,
+        d.clave,
+        d.valor
+    FROM
+        detail d
+) d
+ON (t.c1 = d.c1 AND t.c2 = d.clave);

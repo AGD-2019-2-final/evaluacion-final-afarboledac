@@ -40,3 +40,16 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+INSERT OVERWRITE DIRECTORY 'output/'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+    SELECT
+        YEAR(c4) as fecha ,letra, COUNT(*) as cuenta
+    FROM
+        tbl0
+    LATERAL VIEW
+        explode(c5) tbl0 AS letra
+    GROUP BY YEAR(c4), letra
+    ORDER BY fecha, letra, cuenta;
+
+
+

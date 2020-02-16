@@ -29,6 +29,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -40,4 +42,33 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+columna_fecha = FOREACH u GENERATE birthday, ToDate(birthday, 'yyyy-MM-dd') as formated_birthday;
+columna_fecha_formateada = FOREACH columna_fecha GENERATE birthday,
+                                    (CASE SIZE((CHARARRAY)GetDay(formated_birthday))
+                                        WHEN 1 THEN CONCAT('0', (CHARARRAY)GetDay(formated_birthday))
+                                        WHEN 2 THEN (CHARARRAY)GetDay(formated_birthday)
+                                    END), 
+                                    GetDay(formated_birthday),
+                                    (CASE ToString( formated_birthday, 'EEE')
+                                        WHEN 'Mon' THEN 'lun'
+                                        WHEN 'Tue' THEN 'mar'
+                                        WHEN 'Wed' THEN 'mie'
+                                        WHEN 'Thu' THEN 'jue'
+                                        WHEN 'Fri' THEN 'vie'
+                                        WHEN 'Sat' THEN 'sab'
+                                        WHEN 'Sun' THEN 'dom'
+                                        ELSE ToString( formated_birthday, 'EEE')
+                                    END),
+                                    (CASE ToString( formated_birthday, 'EEE')
+                                        WHEN 'Mon' THEN 'lunes'
+                                        WHEN 'Tue' THEN 'martes'
+                                        WHEN 'Wed' THEN 'miercoles'
+                                        WHEN 'Thu' THEN 'jueves'
+                                        WHEN 'Fri' THEN 'viernes'
+                                        WHEN 'Sat' THEN 'sabado'
+                                        WHEN 'Sun' THEN 'domingo'
+                                    END);
+                                    
 
+STORE columna_fecha_formateada INTO 'output' USING PigStorage(',');
+fs -get output ;

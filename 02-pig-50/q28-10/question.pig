@@ -18,6 +18,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -29,4 +31,8 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+columna_fecha = FOREACH u GENERATE ToDate(birthday, 'yyyy-MM-dd') as birthday;
+columna_year = FOREACH columna_fecha GENERATE GetYear(birthday), SUBSTRING((CHARARRAY)GetYear(birthday),2,4);
 
+STORE columna_year INTO 'output' USING PigStorage(',');
+fs -get output ;

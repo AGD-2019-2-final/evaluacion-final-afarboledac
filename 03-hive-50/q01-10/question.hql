@@ -11,3 +11,17 @@
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS tabla1;
+CREATE TABLE tabla1 (
+    letra STRING,
+    fecha STRING,
+    numero INT
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\t';
+LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE tabla1;
+
+
+INSERT OVERWRITE DIRECTORY 'output/'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT letra, COUNT(1) FROM tabla1 GROUP BY letra ORDER BY letra;

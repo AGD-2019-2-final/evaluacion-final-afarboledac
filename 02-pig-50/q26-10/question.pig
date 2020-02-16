@@ -16,6 +16,8 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -rm -f data.csv ;
+fs -put -f data.csv ;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -27,3 +29,9 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+substring_firstname = FOREACH u GENERATE firstname, SUBSTRING(firstname, 0, 1) as letter;
+filtro = FILTER substring_firstname BY letter >= 'M';
+columna_firstname = FOREACH filtro GENERATE firstname;
+
+STORE columna_firstname INTO 'output' USING PigStorage(',');
+fs -get output ;

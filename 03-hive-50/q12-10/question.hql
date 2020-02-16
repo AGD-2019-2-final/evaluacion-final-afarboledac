@@ -27,4 +27,38 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+DROP TABLE IF EXISTS detail;
+CREATE TABLE detail
+AS
+    SELECT
+        c2,
+        key AS clave,
+        value AS valor
+    FROM (
+        SELECT
+            c2,c3
+        FROM
+            t0
+    ) aux
+    LATERAL VIEW
+        explode(c3) aux;
+
+DROP TABLE IF EXISTS detail2;
+CREATE TABLE detail2
+AS
+    SELECT
+        letra,
+        clave,
+        count(1)
+    FROM 
+        detail
+    LATERAL VIEW
+        explode(c2) aux as letra
+    
+    GROUP BY letra, clave;
+INSERT OVERWRITE DIRECTORY 'output/'
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+SELECT * FROM detail2;
+
 

@@ -13,4 +13,18 @@
 fs -rm -f -r output;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
+
 --
+fs -rm -f data.tsv ;
+fs -put -f data.tsv ;
+
+datos = LOAD 'data.tsv' USING PigStorage('\t') AS (letra:CHARARRAY, bolsa: bag{T: tuple(v:CHARARRAY)}, mapa : MAP[]);
+
+
+letras = FOREACH datos GENERATE FLATTEN(bolsa) AS letra, FLATTEN(KEYSET(mapa)) as llave;
+
+agrupados = GROUP letras BY (letra, llave);
+contar_letras = FOREACH agrupados GENERATE group, COUNT(letras);
+
+STORE contar_letras INTO 'output' USING PigStorage('\t');
+fs -get output ;
