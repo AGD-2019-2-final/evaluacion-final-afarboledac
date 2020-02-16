@@ -59,7 +59,7 @@ AS
         explode(c4) aux;
 
 
-INSERT OVERWRITE DIRECTORY 'output/'
+INSERT OVERWRITE LOCAL DIRECTORY 'output/'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 SELECT
     t.c1, t.c2, d.valor

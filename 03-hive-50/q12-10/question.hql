@@ -56,7 +56,7 @@ AS
         explode(c2) aux as letra
     
     GROUP BY letra, clave;
-INSERT OVERWRITE DIRECTORY 'output/'
+INSERT OVERWRITE LOCAL DIRECTORY 'output/'
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ','
 SELECT * FROM detail2;

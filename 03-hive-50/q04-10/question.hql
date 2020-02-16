@@ -40,7 +40,7 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
-INSERT OVERWRITE DIRECTORY 'output/'
+INSERT OVERWRITE LOCAL DIRECTORY 'output/'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 SELECT
     DISTINCT(letra)
