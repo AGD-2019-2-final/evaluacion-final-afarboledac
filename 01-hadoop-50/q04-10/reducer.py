@@ -9,13 +9,12 @@ class Reducer:
     def __init__(self, stream):
         self.stream = stream
 
-    def emit(self, key, value):
-        sys.stdout.write("{},{}\n".format(key, value))
+    def emit(self, key):
+        sys.stdout.write("{}\n".format(key))
 
     def reduce(self):
-        for key, group in itertools.groupby(self, lambda x: x[0]):
-            minimo_grupo = min(group)
-            self.emit(key=key, value=minimo_grupo[1])
+        for key, value in self:
+            self.emit(key=key)
 
     def __iter__(self):
 
@@ -24,9 +23,7 @@ class Reducer:
             ## Lee el stream de datos y lo parte
             ## en (clave, valor)
             ##
-            key, val = line.split("\t")
-            val = int(val)
-
+            key, val = line.strip().split("\t")
             ##
             ## retorna la tupla (clave, valor)
             ## como el siguiente elemento del ciclo for

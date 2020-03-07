@@ -20,7 +20,7 @@ class Reducer:
             row = [int(key), fecha, letra]
             rows.append(row)
         df = pd.DataFrame(rows, columns=columns).sort_values(by='numero')
-        for i in range (0,6):
+        for i in range (0,5):
             numero1, fecha1, letra1 = df[['numero', 'fecha', 'letra']].iloc[i]
             self.emit(key=letra1, fecha=fecha1, numero= numero1)
 

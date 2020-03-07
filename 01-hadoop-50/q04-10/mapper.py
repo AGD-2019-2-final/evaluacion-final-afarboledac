@@ -22,8 +22,8 @@ class Mapper:
         ##
         for line in self.stream:
             linea = line.strip().split('   ')
-            key = linea[0]
-            value = linea[2]
+            key = linea[1]
+            value = linea[0]
             yield (key, value)
 
 
